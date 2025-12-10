@@ -127,7 +127,7 @@ After successful matching, the treatment effect is estimated through the followi
 
 $$
 \begin{aligned}
-\tau_{\text{SSI}} 
+\tau_{\text{school}} 
 &= \mathbb{E}\!\left[ \ln(P_{1ijt}) - \ln(P_{0ijt}) \,\middle|\, X_i \right] \\
 &= \mathbb{E}\!\left[ \ln(P_{1ijt}) \,\middle|\, X_i, D = 1 \right]
   - \mathbb{E}\!\left[ \ln(P_{0ijt}) \,\middle|\, X_i, D = 0 \right]
