@@ -6,15 +6,16 @@ authors:
   - name: "Benedikt Teuber"
   - name: "Elena Preussner"
 aspectratio: 169
-#bibliography: references.bib
+bibliography: references.bib
 date: today
 date-format: "DD.MM.YYYY"
 format:
   beamer:
+    cite-method: biblatex
     theme: Frankfurt
     include-in-header:
       - text: |
-          \usepackage{multicol} 
+          \usepackage{multicol}
       #- file: custom_theme.tex
 execute: 
   echo: false
@@ -43,15 +44,15 @@ To what extent does the local availability of upper secondary schools that offer
 - Although this weakens formal ties between residence and school assignment, it may \textbf{increase behavioral selection} into high-quality school areas.
     
    \begin{block}{Key Insight:}
-    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices.
+    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices. \parencite{bayer2007}
     \end{block}
     
 - \textit{Implication:} School choice flexibility does not reduce capitalization — it may even \textbf{enhance} it through self-selection.
 
 ## Literature Insights (excerpt)
-- UK: Strong capitalization of \textbf{primary school} performance into housing prices.
-- US: Stronger price effects from \textbf{middle and high school} quality than from elementary schools.
-- France: Secondary school quality capitalized more strongly in areas without \textbf{private school alternatives}.
+- UK: Strong capitalization of \textbf{primary school} performance into housing prices. \parencite{gibbons2003}
+- US: Stronger price effects from \textbf{middle and high school} quality than from elementary schools.\parencite{sedgley2008}
+- France: Secondary school quality capitalized more strongly in areas without \textbf{private school alternatives}. \parencite{fack2010}
 \vspace{0.2cm}
 
 \textit{School type matters for the strength of the housing price effect.}#
@@ -93,7 +94,7 @@ To what extent does the local availability of upper secondary schools that offer
 
 
 ## Identification Strategy
-\textbf{Potential Outcome Model (POM):} following 
+\textbf{Potential Outcome Model (POM):} following \cite{Rubin1974}
 $$\ln(P_{ijt}) =
 \begin{cases}
 \ln(P_{1ijt}) & \text{if } D_i = 1, \\
@@ -121,7 +122,7 @@ Identification Assumption (CIA): $$ \ln(P_{0ijt}), \ln(P_{1ijt}) \;\perp\; D \;\
 - Building characteristics (e.g., floor area, construction year, amenities)
 - Neighborhood characteristics (e.g., income, urbanity, regional fixed effects)
 
-After successful matching, the treatment effect is estimated through the following equation:
+After successful matching, the treatment effect is estimated through the following equation \parencite{tchatoka2021}:
 
 $$
 \begin{aligned}
@@ -134,7 +135,7 @@ $$
 
 
 ## Econometric Model (OLS Specification)
-We estimate the following log-linear autoregressive hedonic regression for elementary and secondary schools each:
+We estimate the following log-linear autoregressive hedonic regression for elementary and secondary schools each \parencite{lu2023}:
 
 $$
 \log(\text{P}_i)
@@ -170,10 +171,7 @@ $$
 
 
 ## Empirical Challenges and Limitations
-- \textbf{Endogeneity:} better schools tend to be located in affluent neighborhoods and students endowed with those priviledged backgrounds generally achieve higher educational outcomes 
+- \textbf{Endogeneity:} better schools tend to be located in affluent neighborhoods and students endowed with those priviledged backgrounds generally achieve higher educational outcomes \parencite{fack2010}
 - \textbf{Measurement:} SSI is an aggregate proxy and may not fully capture educational quality.
     \item \textbf{School access rules:} In some regions, school choice or private alternatives may weaken capitalization effects.
 - \textbf{Price validity:} Property prices from ImmoScout are \textit{asking prices} — not actual transaction prices. This has implications on the interpretations of the results and has to be taken into account.
-
-
-## Literature
