@@ -36,9 +36,45 @@ To what extent does the local availability of upper secondary schools that offer
 - However, the \textbf{magnitude of the effect may differ by school level or track} and most studies suffer from the endogeneity problem of hedonic price regressions
 - Germany's multi-track secondary school system is particularly suited to explore these differences.
 
-## Theoretical Framework
-- \textbf{Tiebout Sorting:} Households "vote with their feet" by moving into districts with desirable public goods – such as schools.
-- \textbf{Human Capital Channel:} Secondary schools (especially Gymnasien) impact long-run outcomes like university access, thus potentially commanding higher price premiums.
+## Tiebout sorting
+
+- The decision-making process of residents includes the availability and quality of provided public goods and services within a municipality
+- Under the assumption of perfect mobility, residents pick the community that exactly satisfies their preferences
+- If such a community or municipality is not feasible, a perfect substitute (if existent) is chosen
+
+## Theory
+
+- Educational quality is an important part of the set of considered public goods, because quality schooling is often decisive for later life outcomes (e.g. labor market opportunities, income, health)
+- Shapes the way parents sort into the housing market, directly influencing the level of residential segregation (Bayer et al. 2007)
+- Ongoing debate about which dimension of education is valued by parents (outputs vs. learning environments and sociodemographic composition; Machin 2011)
+
+## Theory 2
+
+- Households sort across boundaries, generating differences in neighborhood quality — here: education
+- Parents are willing to pay a premium for housing units near top-tier schooling networks (Jayantha 2015)
+
+This capitalizes into the housing market via two mechanisms (La 2015):
+
+- Wealthier households that care about school quality bid up prices within the walking zone of a school
+- This may generate spillovers through changes in neighborhood composition
+
+## Hypothesis
+
+Based on the theoretical background, we expect the following results:
+
+- Parents value the opportunity to achieve higher educational outcomes for their children (z.B. Hörnig & Schäfer 2025)
+- Educational opportunities play a role in parents’ housing decisions
+- Parents are therefore willing to pay a premium for houses near a secondary school offering the opportunity to obtain an *Abitur*
+
+::: {.block}
+**Formal Hypothesis**
+
+\[
+\tau_{\text{school}} &= \text{Estimated treatment effect}
+H_1 &: \beta_1 > 0
+\]
+:::
+
 
 ## Institutional Context and Literature Insight
 - In Germany, parents enjoy considerable freedom in choosing schools — especially at the secondary level.
