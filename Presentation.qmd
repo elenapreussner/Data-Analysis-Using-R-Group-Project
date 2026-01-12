@@ -39,7 +39,7 @@ To what extent does the local availability of upper secondary schools that offer
 ## Tiebout sorting
 
 - The decision-making process of residents include the availability and quality of provided public goods and services within a municipality 
-- Under the assumption of perfect mobility, residents pick that community that exactly satisfies their preferences (tiebout1956-421)
+- Under the assumption of perfect mobility, residents pick that community that exactly satisfies their preferences (@tiebout1956, p. 421)
 - If such a community or municipality is not feasible, a perfect substitute (if existent) is to be chosen
 
 ## Theory
@@ -51,7 +51,7 @@ To what extent does the local availability of upper secondary schools that offer
 ## Theory 2
 
 - Householts sort across boundaries generating differences related to neighborhood quality - in this case: Education
-- Parents are willing to pay a premium for housing units nearby top-tier schooling networks (Jayantha 2015)
+- Parents are willing to pay a premium for housing units nearby top-tier schooling networks \parencite{jayantha2015}
 
 This capitalizes into the housing market via two mechanisms (La 2015):
 
