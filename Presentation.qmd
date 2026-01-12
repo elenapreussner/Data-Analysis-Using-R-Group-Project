@@ -12,6 +12,7 @@ date: today
 date-format: "DD.MM.YYYY"
 format:
   beamer:
+    toc: true
     cite-method: biblatex
     theme: Frankfurt
     include-in-header:
@@ -22,6 +23,8 @@ execute:
   echo: false
 ---
 
+# Introduction
+
 ## Research Question
    \begin{block}{Main question}
 To what extent does the local availability of upper secondary schools that offer an Abitur pathway, compared to other secondary schools, affect housing prices in North Rhine-Westphalia (NRW)?
@@ -31,10 +34,24 @@ To what extent does the local availability of upper secondary schools that offer
 - Therefore, we restrict our analysis on different types of secondary schools and exclude elementary schools
 
 ## Motivation
-- School availability plays an important role in housing decisions.
+- School availability and quality plays an important role in housing decisions.
 - Previous studies have shown capitalization of school quality into housing prices, but evidence on differences across upper secondary school tracks is limited.
+- Especially the capitalization effects of upper secondary school availability as an implicit measure of school quality
 - However, the \textbf{magnitude of the effect may differ by school track} and most studies suffer from the endogeneity problem of hedonic price regressions.
 - Germany’s multi-track secondary school system provides a unique setting to study differential capitalization effects across educational tracks.
+
+## Institutional Context and Literature Insight
+- In NRW, parents enjoy considerable freedom in choosing schools — especially at the secondary level since the reform in 2008/09
+- Although this weakens formal ties between residence and school assignment, it may \textbf{increase behavioral selection} into high-quality school areas.
+    
+   \begin{block}{Key Insight:}
+    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices. \parencite{bayer2007}
+    \end{block}
+    
+- \textit{Implication:} School choice flexibility does not reduce capitalization — it may even \textbf{enhance} it through self-selection.
+
+
+# Theoretical Framework
 
 ## Tiebout sorting
 
@@ -42,21 +59,17 @@ To what extent does the local availability of upper secondary schools that offer
 - Under the assumption of perfect mobility, residents pick that community that exactly satisfies their preferences (@tiebout1956, p. 421)
 - If such a community or municipality is not feasible, a perfect substitute (if existent) is to be chosen
 
-## Theory
+## What do parents value?
 
 - Educational quality is an important part of the set of considered public goods, because quality schooling is often decisive in later life-outcomes (e.g. labor market opportunities, gained income, health etc.) 
 - Shape the way in which parents sort into the housing market directly influencing the level of residentual segregation (Bayer et al. 2007)
 - Ongoing debate, which dimension of education is valued by parents (outputs or learning environments containing sociodemographic composition) - Machin 2011
+- We want to test wether the availability of upper secondary schools is such a dimension
 
-## Theory 2
+## Capitalization mechanism
 
-<<<<<<< HEAD
-- Householts sort across boundaries generating differences related to neighborhood quality - in this case: Education
-- Parents are willing to pay a premium for housing units nearby top-tier schooling networks \parencite{jayantha2015}
-=======
 - Households sort across boundaries generating differences related to neighborhood quality - in this case: Education
-- Parents are willing to pay a premium for housing units nearby top-tier schooling networks (Jayantha 2015)
->>>>>>> bf83ab28f56bb91f91ab524a40bdc0ebd99fc886
+- Parents are willing to pay a premium for housing units nearby top-tier school networks (Jaynatha 2015)
 
 This capitalizes into the housing market via two mechanisms (La 2015):
 
@@ -67,9 +80,11 @@ This capitalizes into the housing market via two mechanisms (La 2015):
 
 Based on the theoretical background, we expect the following results:
 
-- Parents value the opportunity to achieve higher educational outcomes for their children (z.B. Hörnig & Schäfer 2025)
+- Education is one of the most important public services (Zhang 2020) and it is therefore reasonable to test the channel
 - Educational opportunities play a role in parents’ housing decisions
+- Parents value the opportunity to achieve higher educational outcomes for their children (z.B. Hörnig & Schäfer 2025) because of their decisiveness for later life outcomes
 - Parents are therefore willing to pay a premium for houses near a secondary school offering the opportunity to obtain an *Abitur*
+
 
 \begin{block}{Formal Hypothesis}
 \[
@@ -79,16 +94,8 @@ Based on the theoretical background, we expect the following results:
 \]
 \end{block}
 
+# Insights from relevant empirical literature
 
-## Institutional Context and Literature Insight
-- In Germany, parents enjoy considerable freedom in choosing schools — especially at the secondary level.
-- Although this weakens formal ties between residence and school assignment, it may \textbf{increase behavioral selection} into high-quality school areas.
-    
-   \begin{block}{Key Insight:}
-    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices. \parencite{bayer2007}
-    \end{block}
-    
-- \textit{Implication:} School choice flexibility does not reduce capitalization — it may even \textbf{enhance} it through self-selection.
 
 ## Literature Insights (excerpt)
 - UK: Strong capitalization of \textbf{primary school} performance into housing prices. \parencite{gibbons2003}
@@ -97,6 +104,17 @@ Based on the theoretical background, we expect the following results:
 \vspace{0.2cm}
 
 \textit{School type matters for the strength of the housing price effect.}#
+
+
+# Empirical Design
+
+## Assumptions
+- The School Social Index (SSI) provides a reasonable proxy for neighborhood socio-economic composition, as it reflects the socio-economic background of students.
+- Parents consider the availability of Abitur and non-Abitur upper secondary schools in their housing decisions.
+- Within the treatment area and the control area, the effect is constant.
+- Buildings inside and outside of the treatment zones share the same average housing and neighborhood characteristics.
+- Conditional on the controlling for both housing and neighborhood characteristics, the treatment assignment can considered to be random.
+- Sale prices are time-independently exceeding offer prices at a constant rate.
 
 ## Data and Variables
 \textbf{Housing Data:}
@@ -116,7 +134,7 @@ Based on the theoretical background, we expect the following results:
 - Includes information on neighborhood characteristics (e.g. income levels, migration rates etc.)
 
 
-## Empirical Strategy
+## Quasi-experimental approach
 \begin{columns}[T] % [T] = top aligned
     \begin{column}{0.55\textwidth}
         We define spatial treatment zones to estimate the causal effect of upper secondary schools on housing prices using grid-cells:
@@ -134,7 +152,7 @@ Based on the theoretical background, we expect the following results:
 -  Houses that are exposed to different kinds of secondary schools at the same time (double-treated) are also excluded from the sample
 
 
-## Identification Strategy
+## Identification Framework
 \textbf{Potential Outcome Model (POM):} following \cite{Rubin1974}
 $$\ln(P_{ijt}) =
 \begin{cases}
@@ -198,18 +216,17 @@ $$
 - $\varepsilon_i$: error term
 
 
-## Assumptions
-- The School Social Index (SSI) provides a reasonable proxy for neighborhood socio-economic composition, as it reflects the socio-economic background of students.
-- Parents consider the availability of Abitur and non-Abitur upper secondary schools in their housing decisions.
-- Within the treatment area and the control area, the effect is constant.
-- Buildings inside and outside of the treatment zones share the same average housing and neighborhood characteristics.
-- Conditional on the controlling for both housing and neighborhood characteristics, the treatment assignment can considered to be random.
-- Sale prices are time-independently exceeding offer prices at a constant rate.
-
-
-## Empirical Challenges and Limitations
+## Challenges and Limitations
 - \textbf{Endogeneity:} better schools tend to be located in affluent neighborhoods and students endowed with those priviledged backgrounds generally achieve higher educational outcomes \parencite{fack2010}
 - \textbf{Measurement:} SSI is an aggregate proxy and may not fully capture educational quality.
     \item \textbf{School access rules:} In some regions, school choice or private alternatives may weaken capitalization effects.
 - \textbf{Interpretation:} It is arguably that property prices can be interpreted as the willingness to pay for amenities \parencite{jayantha2015} and therefore the difference between the groups as a premium for educational opportunities
 - \textbf{Price validity:} Property prices from ImmoScout are \textit{asking prices} — not actual transaction prices. This has implications on the interpretations of the results and has to be taken into account.
+
+# Results
+
+
+# Policy Implications and further research
+
+
+
