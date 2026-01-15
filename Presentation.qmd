@@ -223,8 +223,8 @@ $$
 
 - log($P_i$): price of a building per $m^2$
 - $\beta_1D_i$: Captures the effect of the treatment of the nearest upper secondary school
-- $\mathbf{X}_i$: vector of building characteristics 
-- $\mathbf{N}_i$: vector of neighborhood characteristics, includes the SSI for a proxy of the social composition
+- $\mathbf{X}_i$: set of building characteristics 
+- $\mathbf{N}_i$: set of neighborhood characteristics, includes the SSI for a proxy of the social composition
 - $\text{FE}_{r(i)}$: Regional fixed effects to account for spatial effects at the grid-cell level
 - $\varepsilon_i$: error term
 
@@ -235,11 +235,29 @@ $$
 - \textbf{School access rules:} In some regions, school choice or private alternatives may weaken capitalization effects.
 - \textbf{Interpretation:} It is arguably that property prices can be interpreted as the willingness to pay for amenities \parencite{jayantha2015} and therefore the difference between the groups as a premium for educational opportunities
 - \textbf{Price validity:} Property prices from ImmoScout are \textit{asking prices} — not actual transaction prices. This has implications on the interpretations of the results and has to be taken into account.
+- \textbf{Data:} Incomplete sets of observed building ($\mathbf{X}_i$) and neighborhood ($\mathbf{N}_i$) characteristics
 
 # Results
 
 
 # Policy Implications and further research
+
+# Appendix
+
+## Control Variables
+
+**Structural/House Characteristics**
+
+number of bedrooms, full and half baths (full baths, half baths), the number of fireplaces, the age of the structure in linear and quadratic form (house age, age squared), the lot size on which 
+the structure is located, and size of the structure measured in square feet. (clark2002)
+
+**Neighborhood characteristics**
+
+SSI as proxy for composition
+
+# Literature
+
+
 
 
 
