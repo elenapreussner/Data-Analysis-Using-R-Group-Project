@@ -98,23 +98,36 @@ Based on the theoretical background, we expect the following results:
 
 
 ## Literature Insights (excerpt)
+
+- Generally speaking, the empirical literature mainly focused on the capitalization effects of school quality
 - UK: Strong capitalization of \textbf{primary school} performance into housing prices. \parencite{gibbons2003}
 - US: Stronger price effects from \textbf{middle and high school} quality than from elementary schools.\parencite{sedgley2008}
 - France: Secondary school quality capitalized more strongly in areas without \textbf{private school alternatives}. \parencite{fack2010}
-\vspace{0.2cm}
-
-\textit{School type matters for the strength of the housing price effect.}#
+- \textit{School type matters for the strength of the housing price effect.}
 
 
 # Empirical Design
 
-## Assumptions
-- The School Social Index (SSI) provides a reasonable proxy for neighborhood socio-economic composition, as it reflects the socio-economic background of students.
+## Basic Identification Assumptions
+
+**Theoretical Assumptions:**
+
+- Households/parents derive utility from the perceived quality of schooling \parencite{brunner2012}
+available to their child
 - Parents consider the availability of Abitur and non-Abitur upper secondary schools in their housing decisions.
-- Within the treatment area and the control area, the effect is constant.
-- Buildings inside and outside of the treatment zones share the same average housing and neighborhood characteristics.
+
+**Empirical Assumptions:**
+
+- The parents preferences regarding their children's education are reflected by hedonic price regressions
 - Conditional on the controlling for both housing and neighborhood characteristics, the treatment assignment can considered to be random.
+- Within the treatment area and the control area, the capitalization effect is constant.
+
+## Assumptions (part 2)
+
+- Buildings inside and outside of the treatment zones share the same average housing and neighborhood characteristics.
 - Sale prices are time-independently exceeding offer prices at a constant rate.
+- Property prices can be interpreted as the willingness to pay for amenities because they are determined by relevant characteristics
+- The School Social Index (SSI) provides a reasonable proxy for neighborhood socio-economic composition, as it reflects the socio-economic background of students.
 
 ## Data and Variables
 \textbf{Housing Data:}
@@ -218,8 +231,8 @@ $$
 
 ## Challenges and Limitations
 - \textbf{Endogeneity:} better schools tend to be located in affluent neighborhoods and students endowed with those priviledged backgrounds generally achieve higher educational outcomes \parencite{fack2010}
-- \textbf{Measurement:} SSI is an aggregate proxy and may not fully capture educational quality.
-    \item \textbf{School access rules:} In some regions, school choice or private alternatives may weaken capitalization effects.
+- \textbf{Assumptions}: It may be unrealistic that the capitalization effects of upper secondary schools are uniform across the whole space \parencite{wen2018}
+- \textbf{School access rules:} In some regions, school choice or private alternatives may weaken capitalization effects.
 - \textbf{Interpretation:} It is arguably that property prices can be interpreted as the willingness to pay for amenities \parencite{jayantha2015} and therefore the difference between the groups as a premium for educational opportunities
 - \textbf{Price validity:} Property prices from ImmoScout are \textit{asking prices} — not actual transaction prices. This has implications on the interpretations of the results and has to be taken into account.
 
