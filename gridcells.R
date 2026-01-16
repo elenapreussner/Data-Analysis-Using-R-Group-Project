@@ -1,15 +1,106 @@
-library(tidyverse)
-library(readxl)
+#########################
+##### preliminaries #####
+#########################
 
-# Daten laden
+
+### load necessary packages
+
+load_packages <- function() {
+  pkgs <- c(
+    # load data
+    "haven",
+    "readxl",
+    "readr",
+    
+    # Data manipulation
+    "tidyverse",
+    "lubridate",
+    "tidyr",
+
+    # Matching & causal inference
+    "MatchIt",
+    "cobalt",
+    "WeightIt",
+    "did",
+    
+    # Regression analysis
+    "fixest",
+    "estimatr",
+    "stats",
+    "lmtest",
+    "sandwich",
+    "marginaleffects",
+    
+    # Tables & reporting
+    "modelsummary",
+    "kableExtra",
+    "broom",
+    
+    # Visualization
+    "ggplot2",
+    "patchwork"
+  )
+  
+  invisible(lapply(pkgs, library, character.only = TRUE))
+}
+
+
+load_packages()
+
+
+#### import data
+
+# Version for Elena
 schulen <- read_xlsx("~/Uni/Data Analysis Using R/school_data.xlsx")
 hauspreise <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
 
-# Schultypen definieren
+# version for Benedikt
+setwd("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/Data-Analysis-Using-R-Group-Project")
+
+schulen <- read_xlsx("school_data.xlsx")
+
+distances <- read_xlsx("distance_to_schools.xlsx")
+
+ssi_data <- read_csv2("2022_social_index.csv")
+
+pupils_data <- read_xlsx("number_pupils.xlsx")
+
+hauspreise <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
+
+
+#### create full school dataset
+
+ssi_data <- ssi_data %>%
+  rename(school_ID = Schulnummer)
+
+schulen <- schulen %>%
+  left_join(
+    ssi_data %>% 
+      select(school_ID, Sozialindexstufe),
+    by = "school_ID"
+  )
+
+schulen <- schulen %>%
+  left_join(
+    pupils_data %>% 
+      select(school_ID, number_pupils),
+    by = "school_ID"
+  )
+
+
+################################################
+##### Identification of treated grid-cells #####
+################################################
+
+
+
+# define relevant school types along the 'Abitur' availability
+
 abitur <- c(20, 15)                                    
 kein_abitur <- c(4, 10, 14)
 
 # Funktion: Finde 5x5 Nachbarn mit Distanz
+
 finde_nachbarn <- function(df, max_dist = 2) {
   df %>%
     separate(ergg_1km, c("x", "y"), "_", remove = FALSE, convert = TRUE) %>%
@@ -24,15 +115,18 @@ finde_nachbarn <- function(df, max_dist = 2) {
 }
 
 # Alle Zellen (Schule + Nachbarn) für beide Schultypen finden
+
 zellen_abitur <- schulen %>%
   filter(school_type %in% abitur) %>%
   finde_nachbarn()
+
 
 zellen_kein_abitur <- schulen %>%
   filter(school_type %in% kein_abitur) %>%
   finde_nachbarn()
 
 # Treatment-Zellen auf Überlappungen prüfen
+
 alle_treatment <- bind_rows(
   zellen_abitur %>% filter(distanz <= 1),
   zellen_kein_abitur %>% filter(distanz <= 1)
@@ -44,6 +138,7 @@ saubere_treatment <- alle_treatment %>%
   pull(ergg_1km)
 
 # Treatment nach Typ aufteilen
+
 treatment_abitur <- zellen_abitur %>%
   filter(distanz <= 1, ergg_1km %in% saubere_treatment) %>%
   select(ergg_1km) %>%
@@ -55,6 +150,7 @@ treatment_kein_abitur <- zellen_kein_abitur %>%
   mutate(treat_kein_abitur = 1)
 
 # Buffer (distanz == 2)
+
 buffer <- bind_rows(
   zellen_abitur %>% filter(distanz == 2),
   zellen_kein_abitur %>% filter(distanz == 2)
@@ -63,9 +159,15 @@ buffer <- bind_rows(
   mutate(buffer = 1)
 
 # Alles zusammenführen
+
 grid_treatment <- full_join(treatment_abitur, treatment_kein_abitur, by = "ergg_1km") %>%
   full_join(buffer, by = "ergg_1km") %>%
   replace_na(list(treat_abitur = 0, treat_kein_abitur = 0, buffer = 0))
+
+view(grid_treatment)
+
+
+
 
 # Mit Hauspreisen verknüpfen
 haeuser <- hauspreise %>%
