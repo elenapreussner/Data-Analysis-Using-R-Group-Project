@@ -6,8 +6,8 @@ schulen <- read_xlsx("~/Uni/Data Analysis Using R/school_data.xlsx")
 hauspreise <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
 
 # Schultypen definieren
-abitur <- c(20, 15)                                    # anpassen!
-kein_abitur <- c(4, 6, 10, 14, 53)
+abitur <- c(20, 15)                                    
+kein_abitur <- c(4, 10, 14)
 
 # Funktion: Finde 5x5 Nachbarn mit Distanz
 finde_nachbarn <- function(df, max_dist = 2) {
