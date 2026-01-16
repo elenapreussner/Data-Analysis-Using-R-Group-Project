@@ -44,11 +44,7 @@ To what extent does the local availability of upper secondary schools that offer
 - In NRW, parents enjoy considerable freedom in choosing schools — especially at the secondary level since the reform in 2008/09
 - Although this weakens formal ties between residence and school assignment, it may \textbf{increase behavioral selection} into high-quality school areas.
     
-   \begin{block}{Key Insight:}
-    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices. \parencite{bayer2007}
-    \end{block}
-    
-- \textit{Implication:} School choice flexibility does not reduce capitalization — it may even \textbf{enhance} it through self-selection.
+
 
 
 # Theoretical Framework
@@ -94,6 +90,9 @@ Based on the theoretical background, we expect the following results:
 \]
 \end{block}
 
+    
+- \textit{Implication:} School choice flexibility does not reduce capitalization — it may even \textbf{enhance} it through self-selection.
+
 # Insights from relevant empirical literature
 
 
@@ -103,8 +102,9 @@ Based on the theoretical background, we expect the following results:
 - UK: Strong capitalization of \textbf{primary school} performance into housing prices. \parencite{gibbons2003}
 - US: Stronger price effects from \textbf{middle and high school} quality than from elementary schools.\parencite{sedgley2008}
 - France: Secondary school quality capitalized more strongly in areas without \textbf{private school alternatives}. \parencite{fack2010}
-- \textit{School type matters for the strength of the housing price effect.}
-
+   \begin{block}{Key Insight:}
+    When school choice is flexible, households with strong school preferences are more likely to relocate to access better schools — reinforcing the link between school quality and housing prices. \parencite{bayer2007}
+    \end{block}
 
 # Empirical Design
 
