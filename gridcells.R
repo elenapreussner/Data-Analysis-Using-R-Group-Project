@@ -65,7 +65,15 @@ ssi_data <- read_csv2("2022_social_index.csv")
 
 pupils_data <- read_xlsx("number_pupils.xlsx")
 
-hauspreise <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
+housing_data <- read_csv("CampusFile_HK_2022.csv")
+
+
+
+
+
+############################
+##### Prepare datasets #####
+############################
 
 
 #### create full school dataset
@@ -88,16 +96,183 @@ schulen <- schulen %>%
   )
 
 
+#### clean-up housing data - use only the houses with information on grid-cells
+
+## recode NA's on grid
+
+
+housing_data <- housing_data %>%
+  mutate(
+    ergg_1km = if_else(ergg_1km == "-9", NA_character_, ergg_1km)
+  )
+
+
+## exclude houses with NA's
+
+
+housing_data_clean <- housing_data %>%
+  filter(!is.na(ergg_1km))
+
 ################################################
 ##### Identification of treated grid-cells #####
 ################################################
 
+#### define relevant school types along the 'Abitur' availability
 
-
-# define relevant school types along the 'Abitur' availability
 
 abitur <- c(20, 15)                                    
 kein_abitur <- c(4, 10, 14)
+
+
+schulen_abi <- schulen %>%
+  filter(school_type %in% c(15, 20))
+
+
+schulen_alle <- schulen %>%
+  filter(school_type %in% c(4, 10, 14, 15, 20))
+
+view(treated_cells)
+
+
+#### create treated-cell dataset for 'Abitur'-schools
+
+treated_cells <- schulen_abi %>%
+  rowwise() %>%
+  reframe(
+    school_ID = school_ID,
+    expand.grid(dx = c(-1, 0, 1), dy = c(-1, 0, 1)) %>%
+      transmute(
+        x = x + dx,
+        y = y + dy,
+        school_tag = if_else(dx == 0 & dy == 0,
+                             as.character(school_ID),
+                             paste0(school_ID, "t"))
+      )
+  ) %>%
+  ungroup()
+
+treated_cells <- treated_cells %>%
+  mutate(ergg_1km = paste0(x, "_", y))
+
+treated_cells_unique <- treated_cells %>%
+  distinct(ergg_1km, .keep_all = TRUE)
+
+
+
+#### create buffer-cells for the exclusion
+
+buffer_cells <- schulen_abi %>%
+  rowwise() %>%
+  reframe(
+    tibble(
+      x = c(
+        x+2, x+2, x+2, x+2, x+2,
+        x,   x+1, x-1, x-2,
+        x-2, x-2, x-2, x-2,
+        x,   x-1, x+1
+      ),
+      y = c(
+        y,   y+1, y+2, y-1, y-2,
+        y-2, y-2, y-2, y-2,
+        y,   y-1, y+1, y+2,
+        y+2, y+2, y+2
+      )
+    )
+  ) %>%
+  ungroup() %>%
+  distinct()
+
+buffer_cells <- buffer_cells %>%
+  mutate(ergg_1km = paste0(x, "_", y))
+
+
+#### check for overlaps
+
+any(treated_cells_unique$ergg_1km %in% buffer_cells$ergg_1km)
+
+
+overlap_ids <- intersect(
+  treated_cells_unique$ergg_1km,
+  buffer_cells$ergg_1km
+)
+
+length(overlap_ids)
+
+
+#### PROBLEM: 2859 overlapping treated cells with buffer
+
+
+#### match datasets using grid-identifyer
+
+all_cells <- bind_rows(
+  treated_cells_unique %>%
+    transmute(
+      ergg_1km, x, y,
+      treated = 1L,
+      buffer  = 0L,
+      source  = "treated_cells",
+      school_tag = as.character(school_tag)
+    ),
+  buffer_cells %>%
+    transmute(
+      ergg_1km, x, y,
+      treated = 0L,
+      buffer  = 1L,
+      source  = "buffer_cells",
+      school_tag = NA_character_
+    )
+) %>%
+  group_by(ergg_1km, x, y) %>%
+  summarise(
+    treated = max(treated),
+    buffer  = max(buffer),
+    source  = paste(sort(unique(source)), collapse = " + "),
+    school_tag = if (all(is.na(school_tag))) NA_character_
+    else paste(sort(unique(na.omit(school_tag))), collapse = ", "),
+    .groups = "drop"
+  )
+
+
+all_cells %>%
+  count(ergg_1km) %>%
+  filter(n > 1)
+
+
+
+##### data aggregation seems successful ########
+
+#### import school data
+
+
+all_cells_schools <- all_cells %>%
+  mutate(
+    # nur echte Schulzellen bekommen eine Join-ID
+    school_ID_lookup = if_else(
+      grepl("t$", school_tag),
+      NA_character_,
+      school_tag
+    )
+  ) %>%
+  left_join(
+    schulen_abi %>%
+      mutate(school_ID = as.character(school_ID)),
+    by = c("school_ID_lookup" = "school_ID")
+  )
+
+
+#### match information with housing data
+
+full_dataset <- housing_data_clean %>%
+  left_join(all_cells_schools, by = "ergg_1km")
+
+
+
+##################################################
+##### preparation final dataset for anaylsis #####
+##################################################
+
+
+
 
 # Funktion: Finde 5x5 Nachbarn mit Distanz
 
@@ -132,6 +307,10 @@ alle_treatment <- bind_rows(
   zellen_kein_abitur %>% filter(distanz <= 1)
 )
 
+
+view(alle_treatment)
+
+view(saubere_treatment)
 saubere_treatment <- alle_treatment %>%
   count(ergg_1km) %>%
   filter(n == 1) %>%
