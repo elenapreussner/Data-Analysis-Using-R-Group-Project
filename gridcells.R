@@ -159,10 +159,10 @@ all_cells <- all_cells %>%
 all_cells <- all_cells %>%
   mutate(abitur_nearby = if_else(school_type_code %in% c(15, 20), 1L, 0L))
 
-#### import school data
-
 all_cells <- all_cells %>%
   mutate(school_tag_code = sub("t$", "", school_tag))
+
+#### import school data
 
 all_cells_school <- all_cells %>%
   left_join(
