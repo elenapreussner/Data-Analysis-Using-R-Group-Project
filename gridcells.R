@@ -125,6 +125,7 @@ all_cells <- bind_rows(
       ergg_1km, x, y,
       treated = 1L,
       buffer  = 0L,
+      control = 0L,
       source  = "treated_cells",
       school_tag = as.character(school_tag),
       school_type_tag = as.character(school_type_tag)
@@ -134,15 +135,26 @@ all_cells <- bind_rows(
       ergg_1km, x, y,
       treated = 0L,
       buffer  = 1L,
+      control = 0L,
       source  = "buffer_cells",
       school_tag = NA_character_,
       school_type = NA_character_,
+    ),
+  control_cells %>%
+    transmute(
+      ergg_1km, x, y,
+      treated = 0L,
+      buffer  = 0L,
+      control = 1L,
+      source = "control_cells",
+      school_tag = NA_character_,
     )
 ) %>%
   group_by(ergg_1km, x, y) %>%
   summarise(
     treated = max(treated),
     buffer  = max(buffer),
+    control = max(control),
     source  = paste(sort(unique(source)), collapse = " + "),
     school_tag = if (all(is.na(school_tag))) NA_character_
     else paste(sort(unique(na.omit(school_tag))), collapse = ", "),
@@ -171,6 +183,28 @@ all_cells_school <- all_cells %>%
       select(school_ID, ssi),
     by = c("school_tag_code" = "school_ID")
   )
+
+#### create non-treated cells
+
+control_cells <- schools %>%
+  rowwise() %>%
+  reframe(
+    school_ID = school_ID,
+    expand.grid(dx = -4:4, dy = -4:4) %>%
+      mutate(dist = pmax(abs(dx), abs(dy))) %>%
+      filter(dist %in% c(3, 4)) %>%
+      transmute(
+        x = x + dx,
+        y = y + dy,
+        distanz = dist,
+        school_tag = paste0(school_ID, "c")
+      )
+  ) %>%
+  ungroup() %>%
+  distinct()
+
+control_cells <- control_cells %>%
+  mutate(ergg_1km = paste0(x, "_", y))
 
 #### match information with housing data
 
