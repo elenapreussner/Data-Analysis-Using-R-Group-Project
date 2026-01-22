@@ -30,8 +30,8 @@ execute:
 To what extent does the local availability of upper secondary schools that offer an Abitur pathway, compared to other secondary schools, affect housing prices in North Rhine-Westphalia (NRW)?
 \end{block}
 - Goal: Estimating heterogeneity in the capitalization of secondary schools that offer the possibility to achieve higher educational outcomes.
-- We assume that parents are willing to pay a premium for their homes, if a school lies within 2km at which their children can make an Abitur (Gymnasium or Gesamtschule)
-- Therefore, we restrict our analysis on different types of secondary schools and exclude elementary schools
+- We assume that parents are willing to pay a premium for their homes, if a school lies within 3km at which their children can make an Abitur (Gymnasium or Gesamtschule)
+- Therefore, we restrict our analysis on different types of secondary schools and exclude elementary schools and other specialised or private schools
 
 ## Motivation
 - School availability and quality plays an important role in housing decisions.
@@ -159,27 +159,30 @@ available to their child
     \end{column}
 \end{columns}
 
-- \textbf{Treatment-Zone} Grid-cells \textbf{within ca. 2 km} radius
-- \textbf{Buffer zone:} within \textbf{1 km} are excluded to prevent spillover contamination
-- \textbf{Untreated zone:} Grid-cells \textbf{more than 3 km} from any school
+- \textbf{Treatment-Zone} Grid-cells \textbf{within ca. 3 km} radius
+- \textbf{Untreated zone:} Grid-cells \textbf{3-4 km} from any school
 -  Houses that are exposed to different kinds of secondary schools at the same time (double-treated) are also excluded from the sample
+
+\begin{block}{Robustness check}
+As a robustness check, we define the treatment zone within a 2 km radius and exclude a \textbf{Buffer zone} of 1km around it to prevent spillover contamination
+\end{block}
 
 
 ## Identification Framework
 \textbf{Potential Outcome Model (POM):} following \cite{Rubin1974}
-$$\ln(P_{ijt}) =
+$$\ln(P_{ij}) =
 \begin{cases}
-\ln(P_{1ijt}) & \text{if } D_i = 1, \\
-\ln(P_{0ijt}) & \text{if } D_i = 0.
+\ln(P_{1ij}) & \text{if } D_i = 1, \\
+\ln(P_{0ij}) & \text{if } D_i = 0.
 \end{cases}
 \]
 \noindent\textbf{where:}
 \[
 \begin{aligned}
-\ln(P_{1ijt}) &:\ \text{Price of the house, when it lies in the treatment-zone}\\
-              &\quad \text{near to a Gymnasium or Gesamtschule}.\\
-\ln(P_{0ijt}) &:\ \text{Price of the house, when it would not have been 'exposed'}\\
-              &\quad \text{to a school (counterfactual)}.
+\ln(P_{1ij}) &:\ \text{Price of the house, when it lies in the treatment-zone}\\
+              &\quad \text{near to a secondary school}.\\
+\ln(P_{0ij}) &:\ \text{Price of the house, when it would not have been 'exposed'}\\
+              &\quad \text{to a secondary school (counterfactual)}.
 \end{aligned}$$
 \begin{block}{Note}
 Since the counterfactual is not observed, we use the most similar house
@@ -188,7 +191,7 @@ lying in the non-treated zone as a proxy for the counterfactual.
 
 
 ## Matching Strategy
-Identification Assumption (CIA): $$ \ln(P_{0ijt}), \ln(P_{1ijt}) \;\perp\; D \;\big| X_i$$
+Identification Assumption (CIA): $$ \ln(P_{0ij}), \ln(P_{1ij}) \;\perp\; D \;\big| X_i$$
 \textbf{Estimation method:} We use \textbf{matching} on observable covariates to compare treated and untreated buildings:
 
 - Building characteristics (e.g., floor area, construction year, amenities)
@@ -199,14 +202,14 @@ After successful matching, the treatment effect is estimated through the followi
 $$
 \begin{aligned}
 \tau_{\text{school}} 
-&= \mathbb{E}\!\left[ \ln(P_{1ijt}) - \ln(P_{0ijt}) \,\middle|\, X_i \right] \\
-&= \mathbb{E}\!\left[ \ln(P_{1ijt}) \,\middle|\, X_i, D = 1 \right]
-  - \mathbb{E}\!\left[ \ln(P_{0ijt}) \,\middle|\, X_i, D = 0 \right]
+&= \mathbb{E}\!\left[ \ln(P_{1ij}) - \ln(P_{0ij}) \,\middle|\, X_i \right] \\
+&= \mathbb{E}\!\left[ \ln(P_{1ij}) \,\middle|\, X_i, D = 1 \right]
+  - \mathbb{E}\!\left[ \ln(P_{0ij}) \,\middle|\, X_i, D = 0 \right]
 \end{aligned}
 $$
 
 
-## Econometric Model (OLS Specification)
+## Econometric Model (OLS Specification) - First model
 We estimate the following log-linear autoregressive hedonic regression for elementary and secondary schools each \parencite{lu2023}:
 
 $$
@@ -222,11 +225,34 @@ $$
 \textbf{Where:}
 
 - log($P_i$): price of a building per $m^2$
-- $\beta_1D_i$: Captures the effect of the treatment of the nearest upper secondary school
+- $D_i$: Is within treatment distance to a secondary school (=1) or not (=0)
 - $\mathbf{X}_i$: set of building characteristics 
 - $\mathbf{N}_i$: set of neighborhood characteristics, includes the SSI for a proxy of the social composition
 - $\text{FE}_{r(i)}$: Regional fixed effects to account for spatial effects at the grid-cell level
 - $\varepsilon_i$: error term
+
+
+## Multiple treatment regime - Second model
+
+We are especially interested in the price premium of an available school that offers academic track compared to other secondary schools (treatment heterogeneity).
+
+The basic specifiaction is extended referring to a multiple treatment regime:
+
+$$
+\log(\text{P}_i)
+= \alpha
++ \beta_1 \, D_i
++ \beta_2 (D_i \times A_i)
++ \mathbf{X}_i' \boldsymbol{\gamma}
++ \mathbf{N}_i' \boldsymbol{\delta}
++ \text{FE}_{r(i)}
++ \varepsilon_i
+$$
+\textbf{Where:}
+
+- $A_i$: Nearest school offers academic track (=1), otherwise (=0)
+- All other variables are the same as for the main specification
+
 
 
 ## Challenges and Limitations
