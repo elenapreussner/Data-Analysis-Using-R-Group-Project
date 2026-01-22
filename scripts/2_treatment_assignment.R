@@ -246,8 +246,8 @@ buffer_cells_robustness <- buffer_cells_robustness %>%
 any(treated_once_robustness$ergg_1km %in% buffer_cells_robustness$ergg_1km)
 
 overlap_ids <- intersect(
-  treated_cells$ergg_1km,
-  buffer_cells$ergg_1km
+  treated_cells_robustness$ergg_1km,
+  buffer_cells_robustness$ergg_1km
 )
 
 length(overlap_ids)
@@ -321,20 +321,41 @@ all_cells_robustness <- bind_rows(
     .groups = "drop"
   )
 
+
+#### create cell data-set without overlaps of treated/controls with buffer
+
+all_cells_robustness_clean <- all_cells_robustness %>%
+  filter(buffer != 1)
+
+
+
+#### code final treatment-variable for robustness check
+
+all_cells_robustness_clean <- all_cells_robustness_clean %>%
+  mutate(
+    school_nearby = case_when(
+      treated == 1 & control == 0 ~ 1L,
+      treated == 1 & control == 1 ~ 1L,
+      treated == 0 & control == 1 ~ 0L,
+      TRUE ~ NA_integer_
+    )
+  ) 
+
+
 ##### code second order treatment
 
-all_cells_robustness <- all_cells_robustness %>%
+all_cells_robustness_clean <- all_cells_robustness_clean %>%
   mutate(school_type_code = sub("t$", "", school_type))
 
-all_cells_robustness <- all_cells_robustness %>%
+all_cells_robustness_clean <- all_cells_robustness_clean %>%
   mutate(abitur_nearby = if_else(school_type_code %in% c(15, 20), 1L, 0L))
 
-all_cells_robustness <- all_cells_robustness %>%
+all_cells_robustness_clean <- all_cells_robustness_clean %>%
   mutate(school_tag_code = sub("t$", "", school_tag))
 
 #### import school data
 
-all_cells_school_robustness <- all_cells_robustness %>%
+all_cells_school_robustness <- all_cells_robustness_clean %>%
   left_join(
     schools %>%
       mutate(school_ID = as.character(school_ID)) %>%
@@ -345,15 +366,37 @@ all_cells_school_robustness <- all_cells_robustness %>%
 
 #### match information with housing data
 
-full_dataset_robustness <- housing_data %>%
-  left_join(all_cells_school, by = "ergg_1km")
-
-#### create final treated data-set without overlaps 
-
-full_dataset_clean_robustness <- full_dataset %>%
-  filter(buffer != 1)
+full_dataset_robustness <- housing_data_NRW %>%
+  left_join(all_cells_school_robustness, by = "ergg_1km")
 
 
+
+#### exclude houses not lying in treated or control cells
+
+
+full_dataset_robustness_clean <- full_dataset_robustness %>%
+  filter(
+    !if_all(
+      c(
+        treated,
+        buffer,
+        control,
+        source,
+        school_tag,
+        school_type,
+        school_nearby,
+        school_type_code,
+        abitur_nearby,
+        school_tag_code
+      ),
+      is.na
+    )
+  )
+
+
+
+full_dataset_robustness_clean %>%
+  count(school_nearby)
 
 
 
