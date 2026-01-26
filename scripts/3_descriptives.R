@@ -133,9 +133,7 @@ plot_distribution <- analysis_data %>%
   ggplot(aes(x = price_sqm, fill = group)) +
   geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
   facet_wrap(~ group, ncol = 1, scales = "free_y") +  
-  scale_fill_manual(values = c("abitur" = "#2E86AB", 
-                               "non_abitur" = "#A23B72", 
-                               "control" = "#95B46A")) +
+  scale_fill_brewer(palette = "Accent") +
   labs(
     title = "distribution of house prices by treatment status",
     x = "price per sqm (EUR)",
@@ -151,9 +149,7 @@ plot_boxplot <- analysis_data %>%
   filter(!is.na(group), price_sqm < 10000) %>%
   ggplot(aes(x = group, y = price_sqm, fill = group)) +
   geom_boxplot() +
-  scale_fill_manual(values = c("abitur" = "#2E86AB", 
-                               "non_abitur" = "#A23B72", 
-                               "control" = "#95B46A")) +
+  scale_fill_brewer(palette = "Accent") +
   labs(
     title = "house prices by treatment group",
     x = "group",
