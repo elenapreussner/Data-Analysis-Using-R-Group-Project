@@ -17,7 +17,7 @@ treated_cells <- schools %>%
   rowwise() %>%
   reframe(
     school_ID = school_ID,
-    expand.grid(dx = -2:2, dy = -2:2) %>%   # treated cells within a distance of up to two around the school-cell
+    expand.grid(dx = -1:1, dy = -1:1) %>%   # treated cells within a distance of up to one around the school-cell
       mutate(dist = pmax(abs(dx), abs(dy))) %>%
       transmute(
         x = x + dx,
@@ -50,7 +50,7 @@ control_cells <- schools %>%
     school_ID = school_ID,
     expand.grid(dx = -4:4, dy = -4:4) %>%
       mutate(dist = pmax(abs(dx), abs(dy))) %>%
-      filter(dist %in% c(3, 4)) %>%   # cells within a distance of 3-4 around the school cell are consiered controls
+      filter(dist %in% c(2, 3, 4)) %>%   # cells within a distance of 2-4 around the school cell are consiered controls
       transmute(
         x = x + dx,
         y = y + dy,
