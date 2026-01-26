@@ -91,3 +91,19 @@ pois_in_grid <- st_join(
   join = st_within,
   left = FALSE
 )
+
+
+
+
+### first variant -> count of each category by grid-cell
+
+grid_type_long <- pois_in_grid %>%
+  st_drop_geometry() %>%
+  group_by(grid_id, munic_id, county_id, lmr_id, infrastructure_type) %>%
+  summarise(
+    n_pois   = n(),
+    osm_ids  = list(osm_id),
+    fclasses = list(fclass),
+    names    = list(name),
+    .groups = "drop"
+  )
