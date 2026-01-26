@@ -40,18 +40,16 @@ pois_nrw <- bind_rows(
 table(pois_nrw$fclass)
 
 
-tags_allday <- c("supermarket","convenience","bakery","chemist","mall",
-                 "post_office","bank","atm", "post_box", "hairdresser")
+tags_allday <- c("supermarket")
 
-tags_health <- c("hospital","clinic","doctors","dentist","pharmacy",
-                 "veterinary")
+tags_health <- c("hospital","doctors", "pharmacy")
 
-tags_freetime <- c("park","playground","sports_centre","stadium",
-                   "swimming_pool","fitness_centre","cinema","theatre","museum", "dog_park", "park")
+tags_freetime <- c("park")
 
-tags_gastro <- c("restaurant","cafe","fast_food","bar","pub", "biergarten")
 
-tags_public <- c("police", "fire_station")
+
+#### Daten zu ÖPNV einlesen und dann Bushaltestelle UND/ODER Straßenbahn/Bahn/Bahnhof
+
 
 
 pois_nrw_clean <- pois_nrw %>%
@@ -60,8 +58,6 @@ pois_nrw_clean <- pois_nrw %>%
       fclass %in% tags_allday   ~ "allday",
       fclass %in% tags_health   ~ "health",
       fclass %in% tags_freetime ~ "freetime",
-      fclass %in% tags_gastro   ~ "gastro",
-      fclass %in% tags_public   ~ "public",
       TRUE ~ NA_character_
     )
   ) %>%
