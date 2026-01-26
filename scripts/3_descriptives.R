@@ -12,7 +12,9 @@ analysis_data <- full_dataset_main_clean %>%
       school_nearby == 1 & abitur_nearby == 0 ~ "non_abitur",
       school_nearby == 0 ~ "control",
       TRUE ~ NA_character_
-    )
+    ),
+    # set factor order: abitur, non_abitur, control
+    group = factor(group, levels = c("abitur", "non_abitur", "control"))
   )
 
 
@@ -50,22 +52,24 @@ stargazer(as.data.frame(price_table),
           rownames = FALSE)
 
 
-# balance table                                          # ANPASSEN!
+# balance table
 balance_table <- analysis_data %>%
   filter(!is.na(group)) %>%
   group_by(group) %>%
   summarise(
     n = n(),
-    mean_price_sqm = mean(price_sqm, na.rm = TRUE),
-    sd_price_sqm = sd(price_sqm, na.rm = TRUE),
-    mean_living_area = mean(wohnflaeche, na.rm = TRUE),
-    sd_living_area = sd(wohnflaeche, na.rm = TRUE),
-    mean_rooms = mean(zimmeranzahl, na.rm = TRUE),
-    sd_rooms = sd(zimmeranzahl, na.rm = TRUE),
-    mean_construction_year = mean(baujahr, na.rm = TRUE),
-    sd_construction_year = sd(baujahr, na.rm = TRUE),
+    price_mean = mean(price_sqm, na.rm = TRUE),
+    price_sd = sd(price_sqm, na.rm = TRUE),
+    area_mean = mean(as.numeric(wohnflaeche), na.rm = TRUE),
+    area_sd = sd(as.numeric(wohnflaeche), na.rm = TRUE),
+    rooms_mean = mean(as.numeric(zimmeranzahl), na.rm = TRUE),
+    rooms_sd = sd(as.numeric(zimmeranzahl), na.rm = TRUE),
+    year_mean = mean(as.numeric(baujahr), na.rm = TRUE),
+    year_sd = sd(as.numeric(baujahr), na.rm = TRUE),
     .groups = "drop"
-  )
+  ) %>%
+  pivot_longer(cols = -group, names_to = "variable", values_to = "value") %>%
+  pivot_wider(names_from = group, values_from = value)
 
 stargazer(as.data.frame(balance_table),
           type = "latex",
@@ -75,7 +79,7 @@ stargazer(as.data.frame(balance_table),
           rownames = FALSE)
 
 
-# t-tests                                                     # NOCHMAL PRÜFEN
+# t-tests
 # abitur vs. control
 test_price_abitur_control <- t.test(
   price_sqm ~ abitur_nearby,
@@ -123,12 +127,12 @@ stargazer(ttest_results,
           rownames = FALSE)
 
 
-# plots                                                    # Y-ACHSE ANPASSEN!
+# plots
 plot_distribution <- analysis_data %>%
   filter(!is.na(group), price_sqm < 10000) %>%
   ggplot(aes(x = price_sqm, fill = group)) +
   geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
-  facet_wrap(~ group, ncol = 1) +
+  facet_wrap(~ group, ncol = 1, scales = "free_y") +  
   scale_fill_manual(values = c("abitur" = "#2E86AB", 
                                "non_abitur" = "#A23B72", 
                                "control" = "#95B46A")) +
