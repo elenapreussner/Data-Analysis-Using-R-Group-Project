@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(readxl)
+library(sf)
 
 
 setwd("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis")
@@ -14,7 +15,7 @@ setwd("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Win
 
 # raw school dataset
 
-schools <- read_xlsx("data/school_data.xlsx")
+schools <- read_xlsx("data/school_data/school_data.xlsx")
 
 # housing data
 
@@ -22,21 +23,21 @@ housing_data <- read.csv("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Po
 housing_data <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
 
 # data on SSI
-ssi_data <- read_csv2("data/2022_social_index.csv")
+ssi_data <- read_csv2("data/school_data/2022_social_index.csv")
 
 
 # data for neighborhood controls
 
-neighborhood_data <- read_xlsx("neighborhood_controls.xlsx", na = c("â€“"))
+neighborhood_data <- read_xlsx("data/neighborhood_data/neighborhood_controls.xlsx", na = c("â€“"))
 
 
 # data for district/regional controls per "Regierungsbezirk
 
-pois_arnsberg    <- st_read(file.path( "arnsberg","gis_osm_pois_free_1.shp"), quiet = TRUE)
-pois_detmold     <- st_read(file.path( "detmold",   "gis_osm_pois_free_1.shp"), quiet = TRUE)
-pois_duesseldorf <- st_read(file.path("duesseldorf", "gis_osm_pois_free_1.shp"), quiet = TRUE)
-pois_koeln       <- st_read(file.path( "koeln",       "gis_osm_pois_free_1.shp"), quiet = TRUE)
-pois_muenster    <- st_read(file.path( "muenster",    "gis_osm_pois_free_1.shp"), quiet = TRUE)
+pois_arnsberg    <- st_read(file.path("data/regional_district_data/arnsberg", "gis_osm_pois_free_1.shp"), quiet = TRUE)
+pois_detmold     <- st_read(file.path("data/regional_district_data/detmold", "gis_osm_pois_free_1.shp"), quiet = TRUE)
+pois_duesseldorf <- st_read(file.path("data/regional_district_data/duesseldorf", "gis_osm_pois_free_1.shp"), quiet = TRUE)
+pois_koeln       <- st_read(file.path("data/regional_district_data/koeln", "gis_osm_pois_free_1.shp"), quiet = TRUE)
+pois_muenster    <- st_read(file.path("data/regional_district_data/muenster", "gis_osm_pois_free_1.shp"), quiet = TRUE)
 
 # grid-cell ID data-set
 
