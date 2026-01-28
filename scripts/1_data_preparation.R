@@ -20,7 +20,7 @@ schools <- read_xlsx("data/school_data/school_data.xlsx")
 # housing data
 
 housing_data <- read.csv("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/CampusFile_HK_2022.csv")
-housing_data <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
+housing_data <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv", na = c("Other missing", "Implausible value"))
 
 # data for neighborhood controls
 
@@ -38,7 +38,6 @@ pois_muenster    <- st_read(file.path("data/regional_district_data/muenster", "g
 # grid-cell ID data-set
 
 grid_df <- st_read("data/grids/grid.geojson")
-
 
 
 #######################
@@ -98,9 +97,39 @@ housing_data_NRW <- housing_data_NRW %>%
   filter(ergg_1km != -9)
 
 
-#### recode controls
+#### filter datasets regarding controls
+
+housing_data_NRW_control <- housing_data_NRW %>%
+  select(
+    wohnflaeche,
+    grundstuecksflaeche,
+    zimmeranzahl,
+    badezimmer,
+    baujahr,
+    keller,
+    price_sqm,
+    ergg_1km
+  )
+
+### rename controls
+
+housing_data_NRW_control <- housing_data_NRW_control %>%
+  rename(
+    living_area = wohnflaeche,
+    site_area = grundstuecksflaeche,
+    rooms_n = zimmeranzahl,
+    baths_n = badezimmer,
+    construction_year = baujahr,
+    cellar = keller
+  )
 
 
+## construct a property age variable using construction year
+
+housing_data_NRW_control <- housing_data_NRW_control %>%
+  mutate(
+    age_building = 2022 - construction_year
+  )
 
 
 #######################
