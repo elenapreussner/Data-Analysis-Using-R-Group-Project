@@ -101,6 +101,7 @@ housing_data_NRW <- housing_data_NRW %>%
 
 housing_data_NRW_control <- housing_data_NRW %>%
   select(
+    obid,
     wohnflaeche,
     grundstuecksflaeche,
     zimmeranzahl,
@@ -124,11 +125,14 @@ housing_data_NRW_control <- housing_data_NRW_control %>%
   )
 
 
-## construct a property age variable using construction year
+## getting variables into analysis format
+# age variable using construction year
+# recode cellar into a dummy
 
 housing_data_NRW_control <- housing_data_NRW_control %>%
   mutate(
-    age_building = 2022 - construction_year
+    age_building = 2022 - construction_year,
+    cellar = if_else(cellar == "Yes", 1L, 0L),
   )
 
 
