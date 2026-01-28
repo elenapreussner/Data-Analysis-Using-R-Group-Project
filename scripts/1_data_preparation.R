@@ -22,14 +22,10 @@ schools <- read_xlsx("data/school_data/school_data.xlsx")
 housing_data <- read.csv("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/CampusFile_HK_2022.csv")
 housing_data <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv")
 
-# data on SSI
-ssi_data <- read_csv2("data/school_data/2022_social_index.csv")
-
-
 # data for neighborhood controls
 
 neighborhood_data <- read_xlsx("data/neighborhood_data/neighborhood_controls.xlsx", na = c("â€“"))
-
+income_data <- read_xlsx("data/neighborhood_data/average_disposable_income_per_capita.xlsx")
 
 # data for district/regional controls per "Regierungsbezirk
 
