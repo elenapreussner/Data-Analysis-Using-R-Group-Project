@@ -279,7 +279,51 @@ the structure is located, and size of the structure measured in square feet. (cl
 
 **Neighborhood characteristics**
 
-SSI as proxy for composition
+## Controls
+
+```{r}
+library(tibble)
+library(knitr)
+library(kableExtra)
+
+controls_table <- tibble(
+  Variable = c(
+    "living_area",
+    "rooms_n",
+    "age_building",
+    "immigrants_percents",
+    "average_age"
+  ),
+  Description = c(
+    "Living area of the dwelling (m²)",
+    "Number of rooms",
+    "Age of the building (years)",
+    "Share of immigrants in the 1 km grid (%)",
+    "Average age of residents in the neighborhood"
+  ),
+  Category = c(
+    "Property characteristics",
+    "Property characteristics",
+    "Property characteristics",
+    "Neighborhood characteristics",
+    "Neighborhood characteristics"
+  )
+)
+
+kable(
+  controls_table,
+  booktabs = TRUE,
+  caption = "Control variables and categories"
+) %>%
+  group_rows(
+    "Property characteristics", 1, 3
+  ) %>%
+  group_rows(
+    "Neighborhood characteristics", 4, 5
+  )
+```
+
+
 
 # Literature
 
