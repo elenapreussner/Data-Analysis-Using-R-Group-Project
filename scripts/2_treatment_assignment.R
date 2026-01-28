@@ -131,21 +131,12 @@ all_cells <- all_cells %>%
   mutate(school_tag_code = sub("t$", "", school_tag)) # separates school_ID from treated indicator for importing school data
 
 
-#### import school data
-
-all_cells_school <- all_cells %>%
-  left_join(
-    schools %>%
-      mutate(school_ID = as.character(school_ID)) %>% # gets information on SSI for each cell
-      select(school_ID, ssi),
-    by = c("school_tag_code" = "school_ID")
-  )
 
 
 #### match information with housing data
 
-full_dataset_main <- housing_data_NRW %>%   # attach information on treatment status and schools on housing data
-  left_join(all_cells_school, by = "ergg_1km")
+full_dataset_main <- housing_full %>%   # attach information on treatment status and schools on housing data
+  left_join(all_cells, by = "ergg_1km")
 
 
 #### exclude houses not lying in treated or control cells
@@ -173,3 +164,34 @@ full_dataset_main_clean <- full_dataset_main %>%
 
 full_dataset_main_clean %>%
   count(school_nearby)
+
+
+#############################
+##### cleaning data-set #####
+#############################
+
+
+#### clean dataset of unnecessary variables and ovservations with NA's on relevant variables
+
+full_dataset_main_clean <- full_dataset_main_clean %>%
+  select(-geometry, -x, -y, -treated, -control, -source, -school_tag, -school_type) %>%
+  drop_na(
+    living_area,
+    site_area,
+    rooms_n,
+    baths_n,
+    age_building,
+    cellar,
+    price_sqm,
+    immigrants_percents,
+    average_age,
+    pharmacy,
+    supermarket,
+    hospital,
+    doctors,
+    park
+  )
+
+
+
+
