@@ -2,7 +2,6 @@ library(tidyverse)
 library(ggplot2)
 library(stargazer)
 
-
 # temporary dataset for analysis
 analysis_data <- full_dataset_main_clean %>%
   mutate(
@@ -52,7 +51,7 @@ stargazer(as.data.frame(price_table),
           rownames = FALSE)
 
 
-# balance table
+# balance table 
 balance_table <- analysis_data %>%
   filter(!is.na(group)) %>%
   group_by(group) %>%
@@ -79,53 +78,65 @@ stargazer(as.data.frame(balance_table),
           rownames = FALSE)
 
 
-# t-tests
+# balance tests (significance tests)
+vars <- c("price_sqm", "wohnflaeche", "zimmeranzahl", "baujahr")
+
 # abitur vs. control
-test_price_abitur_control <- t.test(
-  price_sqm ~ abitur_nearby,
-  data = analysis_data %>% filter(group %in% c("abitur", "control"))
-)
-
-# non-abitur vs. control
-test_price_non_abitur_control <- t.test(
-  price_sqm ~ non_abitur_nearby,
-  data = analysis_data %>% filter(group %in% c("non_abitur", "control"))
-)
-
-# abitur vs. non-abitur
-abitur_data <- analysis_data %>% filter(group == "abitur") %>% pull(price_sqm)
-non_abitur_data <- analysis_data %>% filter(group == "non_abitur") %>% pull(price_sqm)
-test_price_abitur_non_abitur <- t.test(abitur_data, non_abitur_data)
-
-# create t-test results table
-ttest_results <- data.frame(
-  comparison = c("abitur vs. control", 
-                 "non-abitur vs. control", 
-                 "abitur vs. non-abitur"),
-  difference = c(
-    test_price_abitur_control$estimate[1] - test_price_abitur_control$estimate[2],
-    test_price_non_abitur_control$estimate[1] - test_price_non_abitur_control$estimate[2],
-    test_price_abitur_non_abitur$estimate[1] - test_price_abitur_non_abitur$estimate[2]
-  ),
-  t_statistic = c(
-    test_price_abitur_control$statistic,
-    test_price_non_abitur_control$statistic,
-    test_price_abitur_non_abitur$statistic
-  ),
-  p_value = c(
-    test_price_abitur_control$p.value,
-    test_price_non_abitur_control$p.value,
-    test_price_abitur_non_abitur$p.value
+balance_tests_1 <- lapply(vars, function(v) {
+  test <- t.test(as.formula(paste(v, "~ abitur_nearby")), 
+                 data = analysis_data %>% filter(group %in% c("abitur", "control")))
+  data.frame(
+    comparison = "abitur vs. control",
+    variable = v,
+    mean_diff = test$estimate[1] - test$estimate[2],
+    t_stat = test$statistic,
+    p_value = test$p.value
   )
-)
+}) %>% bind_rows()
 
-stargazer(ttest_results,
+# non_abitur vs. control
+balance_tests_2 <- lapply(vars, function(v) {
+  test <- t.test(as.formula(paste(v, "~ non_abitur_nearby")), 
+                 data = analysis_data %>% filter(group %in% c("non_abitur", "control")))
+  data.frame(
+    comparison = "non_abitur vs. control",
+    variable = v,
+    mean_diff = test$estimate[1] - test$estimate[2],
+    t_stat = test$statistic,
+    p_value = test$p.value
+  )
+}) %>% bind_rows()
+
+# abitur vs. non_abitur
+balance_tests_3 <- lapply(vars, function(v) {
+  data_abitur <- analysis_data %>% filter(group == "abitur") %>% pull(!!sym(v))
+  data_non_abitur <- analysis_data %>% filter(group == "non_abitur") %>% pull(!!sym(v))
+  test <- t.test(data_abitur, data_non_abitur)
+  data.frame(
+    comparison = "abitur vs. non_abitur",
+    variable = v,
+    mean_diff = test$estimate[1] - test$estimate[2],
+    t_stat = test$statistic,
+    p_value = test$p.value
+  )
+}) %>% bind_rows()
+
+# combine all tests and format p-values
+balance_tests <- bind_rows(balance_tests_1, balance_tests_2, balance_tests_3) %>%
+  mutate(
+    mean_diff = round(mean_diff, 3),
+    t_stat = round(t_stat, 3),
+    p_value = sprintf("%.3f", p_value)  # Format p-values with exactly 3 decimals
+  ) %>%
+  select(comparison, variable, mean_diff, t_stat, p_value)
+
+stargazer(as.data.frame(balance_tests),
           type = "latex",
           summary = FALSE,
-          title = "t-tests: price differences",
+          title = "balance tests: significance of differences",
           digits = 3,
+          no.space = TRUE,
           rownames = FALSE)
-
 
 # plots
 plot_distribution <- analysis_data %>%
