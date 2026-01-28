@@ -187,7 +187,12 @@ grid__district_dummies <- pois_in_grid %>%
 
 grid_full_with_district_dummies <- grid_utm %>%
   left_join(grid__district_dummies, by = "grid_id") %>%
-  mutate(across(any_of(wanted), ~coalesce(.x, 0L)))
+  mutate(
+    across(
+      setdiff(names(grid__district_dummies), "grid_id"),
+      ~coalesce(.x, 0L)
+    )
+  )
 
 
 #########################################################
