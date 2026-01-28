@@ -138,6 +138,33 @@ stargazer(as.data.frame(balance_tests),
           no.space = TRUE,
           rownames = FALSE)
 
+
+# balance test simple
+vars <- c("price_sqm", "wohnflaeche", "zimmeranzahl", "baujahr")
+
+# school_nearby vs. control
+balance_tests <- lapply(vars, function(v) {
+  test <- t.test(as.formula(paste(v, "~ school_nearby")), 
+                 data = analysis_data %>% filter(school_nearby %in% c(0, 1)))
+  data.frame(
+    comparison = "school_nearby vs. control",
+    variable = v,
+    mean_diff = round(test$estimate[1] - test$estimate[2], 3),
+    t_stat = round(test$statistic, 3),
+    p_value = sprintf("%.3f", test$p.value)
+  )
+}) %>% bind_rows() %>%
+  select(comparison, variable, mean_diff, t_stat, p_value)
+
+stargazer(as.data.frame(balance_tests),
+          type = "latex",
+          summary = FALSE,
+          title = "balance tests: school_nearby vs. control",
+          digits = 3,
+          no.space = TRUE,
+          rownames = FALSE)
+
+
 # plots
 plot_distribution <- analysis_data %>%
   filter(!is.na(group), price_sqm < 10000) %>%
