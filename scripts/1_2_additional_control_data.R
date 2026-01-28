@@ -1,5 +1,6 @@
 library(sf)
 library(dplyr)
+library(tidyr)
 
 # Pfad zu deinem Ordner "regionaldaten"
 
@@ -12,8 +13,8 @@ grid_df <- st_read("grid.geojson")
 
 ### import data on POI's for different "Regierungsbezirke" in NRW
 
-pois_arnsberg    <- st_read(file.path( "arnsberg",    "gis_osm_pois_free_1.shp"), quiet = TRUE)
-pois_detmold     <- st_read(file.path( "detmold",     "gis_osm_pois_free_1.shp"), quiet = TRUE)
+railways_arnsberg    <- st_read(file.path( "arnsberg","gis_osm_pois_free_1.shp.shp"), quiet = TRUE)
+pois_detmold     <- st_read(file.path( "detmold",   "gis_osm_pois_free_1.shp"), quiet = TRUE)
 pois_duesseldorf <- st_read(file.path("duesseldorf", "gis_osm_pois_free_1.shp"), quiet = TRUE)
 pois_koeln       <- st_read(file.path( "koeln",       "gis_osm_pois_free_1.shp"), quiet = TRUE)
 pois_muenster    <- st_read(file.path( "muenster",    "gis_osm_pois_free_1.shp"), quiet = TRUE)
@@ -33,36 +34,19 @@ pois_nrw <- bind_rows(
 )
 
 
-
-### code auxiliary variable for relevant POI's
-
-
-table(pois_nrw$fclass)
+# filter for relevant POI's
 
 
-tags_allday <- c("supermarket")
-
-tags_health <- c("hospital","doctors", "pharmacy")
-
-tags_freetime <- c("park")
-
-
-
-#### Daten zu ÖPNV einlesen und dann Bushaltestelle UND/ODER Straßenbahn/Bahn/Bahnhof
-
-
-
-pois_nrw_clean <- pois_nrw %>%
-  mutate(
-    infrastructure_type = case_when(
-      fclass %in% tags_allday   ~ "allday",
-      fclass %in% tags_health   ~ "health",
-      fclass %in% tags_freetime ~ "freetime",
-      TRUE ~ NA_character_
-    )
-  ) %>%
-  filter(!is.na(infrastructure_type))
-
+pois_nrw_relevant <- pois_nrw %>%
+  filter(
+    fclass %in% c(
+      "supermarket",
+      "hospital",
+      "doctors",
+      "pharmacy",
+      "park"
+      )
+  )
 
 
 
@@ -70,36 +54,39 @@ pois_nrw_clean <- pois_nrw %>%
 
 # check CRS
 
-st_crs(pois_nrw_clean)
+st_crs(pois_nrw_relevant)
 st_crs(grid_df)
 
 
-# transform CRS for matching purpose
+# adjust CRS for matching purpose for alignment between data-sets
 
 grid_utm <- st_transform(grid_df, 25832) %>% st_make_valid()
+pois_utm <- st_transform(pois_nrw_relevant, 25832)
 
 
-# join datasets
+# join pois-dataset with grid-ids
 
 pois_in_grid <- st_join(
-  pois_nrw_clean,
-  grid_utm[, c("grid_id","munic_id","county_id","lmr_id")],
+  pois_utm,
+  grid_utm[, c("grid_id")],   
   join = st_within,
   left = FALSE
 )
 
 
+## create dummy-variables for controls for each POI
+# 1 if POI is present in grid-cell, 0 otherwise
 
+wanted <- c("doctors", "hospital", "park", "pharmacy", "supermarket") # define relvant POI's
 
-### first variant -> count of each category by grid-cell
-
-grid_type_long <- pois_in_grid %>%
+grid_dummies <- pois_in_grid %>% # code dummies in pois-dataset 
   st_drop_geometry() %>%
-  group_by(grid_id, munic_id, county_id, lmr_id, infrastructure_type) %>%
-  summarise(
-    n_pois   = n(),
-    osm_ids  = list(osm_id),
-    fclasses = list(fclass),
-    names    = list(name),
-    .groups = "drop"
-  )
+  filter(fclass %in% wanted) %>%
+  distinct(grid_id, fclass) %>%        
+  mutate(value = 1L) %>%
+  pivot_wider(names_from = fclass, values_from = value, values_fill = 0L)
+
+
+grid_with_dummies_utm <- grid_utm %>% # join them with grid-ids
+  left_join(grid_dummies, by = "grid_id") %>%
+  mutate(across(any_of(wanted), ~coalesce(.x, 0L)))
