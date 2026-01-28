@@ -7,9 +7,11 @@
 library(tidyverse)
 library(readxl)
 library(sf)
+library(here)
+here("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/dauR_group_project")
 
+setwd("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/dauR_group_project")
 
-setwd("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis")
 
 #### import various data-sets ####
 
@@ -19,7 +21,7 @@ schools <- read_xlsx("data/school_data/school_data.xlsx")
 
 # housing data
 
-housing_data <- read.csv("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/CampusFile_HK_2022.csv")
+housing_data <- read.csv("C:/Users/bened/OneDrive/Desktop/Uni/Master Economic Policy Consulting/Wintersemester 2025-26/Data Analysis/CampusFile_HK_2022.csv", na = c("Other missing", "Implausible value"))
 housing_data <- read_csv("~/Uni/Data Analysis Using R/CampusFile_HK_2022.csv", na = c("Other missing", "Implausible value"))
 
 # data for neighborhood controls
@@ -49,21 +51,6 @@ grid_df <- st_read("data/grids/grid.geojson")
 ## school dataset ##
 ####################
 
-# rename school ID
-
-ssi_data <- ssi_data %>%
-  rename(school_ID = Schulnummer,
-         ssi = Sozialindexstufe)
-
-
-# get information on SSI
-
-schools <- schools %>%
-  left_join(
-    ssi_data %>% 
-      select(school_ID, ssi),
-    by = "school_ID"
-  ) 
 
 
 #### filter school data regarding relevant school types (secondary schools)
@@ -102,6 +89,7 @@ housing_data_NRW <- housing_data_NRW %>%
 housing_data_NRW_control <- housing_data_NRW %>%
   select(
     obid,
+    gid2019,
     wohnflaeche,
     grundstuecksflaeche,
     zimmeranzahl,
@@ -139,8 +127,18 @@ housing_data_NRW_control <- housing_data_NRW_control %>%
 #######################
 ## neighborhood data ##
 #######################
-# NA's are already correctly interpreted, nothing more has to be done here for preperation
 
+
+# get information on ergg_1km (grid-id) 
+
+neighborhood_data <- neighborhood_data %>%
+  mutate(
+    ergg_1km = str_c(
+      str_sub(x_mp_1km, 1, 4),
+      "_",
+      str_sub(y_mp_1km, 1, 4)
+    )
+  )
 
 
 
@@ -227,6 +225,22 @@ grid_full_with_district_dummies <- grid_utm %>%
 #########################################################
 #### joining all information except treatment status ####
 #########################################################
+
+
+##### ergänze noch die income data pro grid-cell
+
+housing_full <- housing_data_NRW_control %>%
+  left_join(
+    neighborhood_data %>%
+      select(ergg_1km, immigrants_percents, average_age),
+    by = "ergg_1km"
+  ) %>%
+  left_join(
+    grid_with_dummies_utm %>%
+      select(grid_id, pharmacy, supermarket, hospital, doctors, park),
+    by = c("ergg_1km" = "grid_id")
+  )
+
 
 
 
